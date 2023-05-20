@@ -15,4 +15,20 @@ async function validateProjectId(req, res, next) {
   }
 }
 
-module.exports = { validateProjectId };
+function validateProjectPayload(req, res, next) {
+  try {
+    const { name, description } = req.body;
+    if (!name || !description) {
+      res.status(400).json({
+        message:
+          "Lütfen name ve description alanlarının dolu olduğundan emin olun",
+      });
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { validateProjectId, validateProjectPayload };

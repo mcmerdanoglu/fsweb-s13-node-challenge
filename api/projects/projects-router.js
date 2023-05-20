@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const projectsModel = require("./projects-model");
 const mw = require("./projects-middleware");
+const { json } = require("express");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -20,9 +21,28 @@ router.get("/:id", mw.validateProjectId, (req, res, next) => {
   }
 });
 
-router.post("/", (req, res, next) => {});
+router.post("/", mw.validateProjectPayload, async (req, res, next) => {
+  try {
+    const insertedProject = await projectsModel.insert({
+      name: req.body.name,
+      description: req.body.description,
+      completed: req.body.completed,
+    });
+    res.status(201).json(insertedProject);
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.put("/:id", mw.validateProjectId, (req, res, next) => {});
+router.put(
+  "/:id",
+  mw.validateProjectId,
+  mw.validateProjectPayload,
+  (req, res, next) => {
+    try {
+    } catch (error) {}
+  }
+);
 
 router.delete("/:id", mw.validateProjectId, (req, res, next) => {});
 
