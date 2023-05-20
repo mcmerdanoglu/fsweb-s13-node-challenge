@@ -31,4 +31,31 @@ function validateProjectPayload(req, res, next) {
   }
 }
 
-module.exports = { validateProjectId, validateProjectPayload };
+/*function validateProjectPayloadForUpdate(req, res, next) {
+  try {
+    const { name, description } = req.body;
+    if (!name) {
+      res.status(400).json({
+        message: "Lütfen name alanının dolu olduğundan emin olun",
+      });
+    } else {
+      next();
+    }
+
+    if (!description) {
+      res.status(400).json({
+        message: "Lütfen description alanının dolu olduğundan emin olun",
+      });
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+}*/
+
+module.exports = {
+  validateProjectId,
+  validateProjectPayload,
+  /*validateProjectPayloadForUpdate*/
+};

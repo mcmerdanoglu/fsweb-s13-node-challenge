@@ -23,11 +23,12 @@ router.get("/:id", mw.validateProjectId, (req, res, next) => {
 
 router.post("/", mw.validateProjectPayload, async (req, res, next) => {
   try {
-    const insertedProject = await projectsModel.insert({
+    let model = {
       name: req.body.name,
       description: req.body.description,
       completed: req.body.completed,
-    });
+    };
+    const insertedProject = await projectsModel.insert(model);
     res.status(201).json(insertedProject);
   } catch (error) {
     next(error);
@@ -38,14 +39,40 @@ router.put(
   "/:id",
   mw.validateProjectId,
   mw.validateProjectPayload,
-  (req, res, next) => {
+  async (req, res, next) => {
     try {
-    } catch (error) {}
+      let model = {
+        name: req.body.name,
+        description: req.body.description,
+        completed: req.body.completed,
+      };
+      const updatedProject = await projectsModel.update(req.params.id, model);
+      res.json(updatedProject);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
-router.delete("/:id", mw.validateProjectId, (req, res, next) => {});
+router.delete("/:id", mw.validateProjectId, async (req, res, next) => {
+  try {
+    // Silinen nesne ekrana yazılsın istenirse bu şekilde yazılabilir fakat modelde silinen nesne sayısı dönecek şekilde yazıldığı için yorumlaştırldı.
+    /* const deletedProject = await projectsModel.remove(req.params.id);
+     res.json({ message: "Silme işlemi başarılı", deletedProject }) veya res.json({ message: "Silme işlemi başarılı"}, deletedProject) ;*/
+    await projectsModel.remove(req.params.id);
+    res.json({ message: "Silme işlemi başarılı" });
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.get("/:id/actions", mw.validateProjectId, (req, res, next) => {});
+router.get("/:id/actions", mw.validateProjectId, async (req, res, next) => {
+  try {
+    const projectActions = await projectsModel.getProjectActions(req.params.id);
+    res.json(projectActions);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
