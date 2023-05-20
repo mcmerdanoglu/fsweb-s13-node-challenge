@@ -55,6 +55,14 @@ router.put(
     }
   }
 );
-router.delete("/:id", mw.validateActionId, (req, res, next) => {});
+
+router.delete("/:id", mw.validateActionId, async (req, res, next) => {
+  try {
+    await actionsModel.remove(req.params.id);
+    res.json({ message: "Silme işlemi başarılı" });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
