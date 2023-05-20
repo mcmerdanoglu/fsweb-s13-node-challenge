@@ -21,8 +21,40 @@ router.get("/:id", mw.validateActionId, (req, res, next) => {
   }
 });
 
-router.post("/", (req, res, next) => {});
-router.put("/:id", mw.validateActionId, (req, res, next) => {});
+router.post("/", mw.validateActionPayload, async (req, res, next) => {
+  try {
+    let model = {
+      project_id: req.body.project_id,
+      description: req.body.description,
+      notes: req.body.notes,
+      completed: req.body.completed,
+    };
+    const insertedAction = await actionsModel.insert(model);
+    res.status(201).json(insertedAction);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put(
+  "/:id",
+  mw.validateActionId,
+  mw.validateActionPayload,
+  async (req, res, next) => {
+    try {
+      let model = {
+        project_id: req.body.project_id,
+        description: req.body.description,
+        notes: req.body.notes,
+        completed: req.body.completed,
+      };
+      const updatedAction = await actionsModel.update(req.params.id, model);
+      res.json(updatedAction);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 router.delete("/:id", mw.validateActionId, (req, res, next) => {});
 
 module.exports = router;
